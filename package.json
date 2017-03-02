@@ -14,10 +14,7 @@
     "type": "git",
     "url": "git+https://github.com/hollislau/sla-site.git"
   },
-  "author": {
-    "name": "Hollis Lau",
-    "email": "hollislau@hotmail.com"
-  },
+  "author": "Hollis Lau <hollislau@hotmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/hollislau/sla-site/issues"
