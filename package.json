@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/hollislau/sla-site#readme",
   "devDependencies": {
+    "eslint": "^3.17.0",
+    "eslint-plugin-react": "^6.10.0",
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.1",
     "gulp-livereload": "^3.8.1",
