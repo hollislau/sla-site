@@ -1,11 +1,11 @@
 const gulp = require('gulp');
 const eslint = require('gulp-eslint');
+const mocha = require('gulp-mocha');
 const sass = require('gulp-sass');
 const maps = require('gulp-sourcemaps');
 const webpack = require('webpack-stream');
 const nodemon = require('gulp-nodemon');
 const livereload = require('gulp-livereload');
-
 const lintFiles = [
   'app/**/*.js',
   'lib/**/*.js',
@@ -15,6 +15,7 @@ const lintFiles = [
   'server.js'
 ];
 const staticFiles = ['app/**/*.html'];
+
 var nodemonStream;
 
 gulp.task('lint', () => {
@@ -22,6 +23,13 @@ gulp.task('lint', () => {
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
+});
+
+gulp.task('server:test', () => {
+  return gulp.src('test/unit/server/**/*_test.js')
+    .pipe(mocha({
+      reporter: 'spec'
+    }));
 });
 
 gulp.task('static:dev', () => {
@@ -56,6 +64,7 @@ gulp.task('watch', ['build:dev'], () => {
   gulp.watch('gulpfile.js', ['watch']);
 });
 
+gulp.task('test', ['server:test']);
 gulp.task('build:dev', ['static:dev']);
 gulp.task('build:pro', ['static:pro']);
-gulp.task('default', ['lint']);
+gulp.task('default', ['lint', 'test']);
