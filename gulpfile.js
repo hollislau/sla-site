@@ -6,6 +6,7 @@ const maps = require('gulp-sourcemaps');
 const webpack = require('webpack-stream');
 const nodemon = require('gulp-nodemon');
 const livereload = require('gulp-livereload');
+
 const lintFiles = [
   'app/**/*.js',
   'lib/**/*.js',
