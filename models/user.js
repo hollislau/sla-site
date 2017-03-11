@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   admin: { type: Boolean, required: true, default: false },
-  tokenHash: { type: String, required: true, unique: true }
+  idHash: { type: String, required: true, unique: true }
 });
 
 userSchema.methods.generateHashPass = function (password) {
@@ -25,7 +25,7 @@ userSchema.methods.generateHash = function (cb) {
   const _generateHash = () => {
     const hash = crypto.randomBytes(32);
 
-    this.tokenHash = hash.toString('hex');
+    this.idHash = hash.toString('hex');
     this.save((err) => {
       if (err) {
         if (tries > 4) return cb(new Error('Unable to save user token hash!'));
@@ -38,7 +38,7 @@ userSchema.methods.generateHash = function (cb) {
 
       if (timeout) clearTimeout(timeout);
 
-      cb(null, this.tokenHash);
+      cb(null, this.idHash);
     });
   };
 

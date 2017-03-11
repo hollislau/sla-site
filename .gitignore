@@ -38,10 +38,11 @@ Thumbs.db
 
 # Directories #
 ################
-node_modules
-test/data
 build
 db
+node_modules
+ssl
+test/data
 
 # Files #
 #########

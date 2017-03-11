@@ -1,11 +1,13 @@
 const chai = require('chai');
 const dirtyChai = require('dirty-chai');
 const chaiHttp = require('chai-http');
+const server = require(__dirname + '/../../../_server');
+
 chai.use(dirtyChai);
 chai.use(chaiHttp);
+
 const expect = chai.expect;
 const request = chai.request;
-const server = require(__dirname + '/../../../_server');
 
 describe('Server', () => {
   before((done) => {
@@ -20,7 +22,7 @@ describe('Server', () => {
   });
 
   it('should send index on GET request to root', (done) => {
-    request('localhost:' + this.PORT)
+    request('https://localhost:' + this.PORT)
       .get('/')
       .end((err, res) => {
         expect(err).to.be.null();
