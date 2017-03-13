@@ -47,3 +47,4 @@ test/data
 # Files #
 #########
 .node-version
+config.js

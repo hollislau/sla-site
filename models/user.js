@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+const config = require(__dirname + '/../config');
 
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
@@ -49,7 +50,7 @@ userSchema.methods.generateToken = function (cb) {
   this.generateHash((err, hash) => {
     if (err) return cb(err);
 
-    cb(null, jwt.sign({ idd: hash }, process.env.SLA_SECRET, { expiresIn: '1d' }));
+    cb(null, jwt.sign({ idd: hash }, config.jwtSecret, { expiresIn: '1d' }));
   });
 };
 
