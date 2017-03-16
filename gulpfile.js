@@ -10,10 +10,10 @@ const livereload = require('gulp-livereload');
 const lintFiles = [
   'app/**/*.js',
   'lib/**/*.js',
+  'models/**/*.js',
+  'routes/**/*.js',
   'test/**/*.js',
-  '_server.js',
-  'gulpfile.js',
-  'server.js'
+  '*.js'
 ];
 const staticFiles = ['app/**/*.html'];
 

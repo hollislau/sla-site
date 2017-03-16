@@ -1,13 +1,15 @@
 const express = require('express');
 const https = require('https');
-const fs = require('fs');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+const config = require(__dirname + '/config');
+const certConfig = require(__dirname + '/cert_config');
 
 const app = express();
 const options = {
-  key: fs.readFileSync(__dirname + '/ssl/private.key'),
-  cert: fs.readFileSync(__dirname + '/ssl/certificate.pem')
+  key: certConfig.privateKey,
+  passphrase: config.privateKeyPass,
+  cert: certConfig.certificate
 };
 
 app.use(morgan('dev'));

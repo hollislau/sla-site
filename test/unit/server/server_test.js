@@ -1,9 +1,9 @@
 const chai = require('chai');
 const dirtyChai = require('dirty-chai');
 const chaiHttp = require('chai-http');
-const fs = require('fs');
 const server = require(__dirname + '/../../../_server');
 const config = require(__dirname + '/../../../config');
+const certConfig = require(__dirname + '/../../../cert_config');
 
 chai.use(dirtyChai);
 chai.use(chaiHttp);
@@ -13,24 +13,18 @@ const request = chai.request;
 
 describe('Server', () => {
   before((done) => {
-    if (config.selfSignedCert) {
-      this.cert = fs.readFileSync(__dirname + '/../../../ssl/certificate.pem');
-    }
-
-    this.portBackup = process.env.PORT;
-    this.PORT = process.env.PORT = 5000;
-    this.server = server(this.PORT, null, done);
+    this.port = 5443;
+    this.server = server(this.port, null, done);
   });
 
   after((done) => {
-    process.env.PORT = this.portBackup;
     this.server.close(done);
   });
 
   it('should send index on GET request to root', (done) => {
-    request('https://localhost:' + this.PORT)
+    request('https://' + config.domain + ':' + this.port)
       .get('/')
-      .ca(this.cert)
+      .ca(certConfig.customCa)
       .end((err, res) => {
         expect(err).to.be.null();
         expect(res).to.have.status(200);
