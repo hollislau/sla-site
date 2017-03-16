@@ -2,13 +2,13 @@ const express = require('express');
 const https = require('https');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
-const config = require(__dirname + '/config');
 const certConfig = require(__dirname + '/cert_config');
+const privateKeyPass = require(__dirname + '/config').privateKeyPass;
 
 const app = express();
 const options = {
   key: certConfig.privateKey,
-  passphrase: config.privateKeyPass,
+  passphrase: privateKeyPass,
   cert: certConfig.certificate
 };
 

@@ -2,8 +2,8 @@ const chai = require('chai');
 const dirtyChai = require('dirty-chai');
 const chaiHttp = require('chai-http');
 const server = require(__dirname + '/../../../_server');
-const config = require(__dirname + '/../../../config');
-const certConfig = require(__dirname + '/../../../cert_config');
+const domain = require(__dirname + '/../../../config').domain;
+const customCa = require(__dirname + '/../../../cert_config').customCa;
 
 chai.use(dirtyChai);
 chai.use(chaiHttp);
@@ -22,9 +22,9 @@ describe('Server', () => {
   });
 
   it('should send index on GET request to root', (done) => {
-    request('https://' + config.domain + ':' + this.port)
+    request('https://' + domain + ':' + this.port)
       .get('/')
-      .ca(certConfig.customCa)
+      .ca(customCa)
       .end((err, res) => {
         expect(err).to.be.null();
         expect(res).to.have.status(200);
