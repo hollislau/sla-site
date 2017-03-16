@@ -8,8 +8,10 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   admin: { type: Boolean, required: true, default: false },
-  idHash: { type: String, required: true, unique: true }
+  idHash: { type: String, unique: true }
 });
+
+mongoose.Promise = global.Promise;
 
 userSchema.methods.generateHashPass = function (password) {
   return this.password = bcrypt.hashSync(password, 8);
