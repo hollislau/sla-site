@@ -1,4 +1,5 @@
 const express = require('express');
+const helmet = require('helmet');
 const https = require('https');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
@@ -12,6 +13,7 @@ const options = {
   cert: certConfig.certificate
 };
 
+app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.static(__dirname + '/build'));
 

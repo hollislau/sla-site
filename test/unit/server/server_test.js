@@ -1,8 +1,8 @@
 const chai = require('chai');
-const dirtyChai = require('dirty-chai');
 const chaiHttp = require('chai-http');
-const server = require(__dirname + '/../../../_server');
+const dirtyChai = require('dirty-chai');
 const config = require(__dirname + '/../../../config');
+const server = require(__dirname + '/../../../_server');
 const customCa = require(__dirname + '/../../../cert_config').customCa;
 
 chai.use(dirtyChai);

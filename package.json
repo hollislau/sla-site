@@ -40,6 +40,7 @@
     "bcrypt": "latest",
     "body-parser": "^1.17.1",
     "express": "^4.14.1",
+    "helmet": "^3.5.0",
     "jsonwebtoken": "latest",
     "morgan": "^1.8.1"
   }
