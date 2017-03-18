@@ -2,8 +2,8 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const dirtyChai = require('dirty-chai');
 const config = require(__dirname + '/../../../config');
-const server = require(__dirname + '/../../../_server');
 const customCa = require(__dirname + '/../../../cert_config').customCa;
+const server = require(__dirname + '/../../../_server');
 
 chai.use(dirtyChai);
 chai.use(chaiHttp);
@@ -13,7 +13,7 @@ const request = chai.request;
 
 describe('Server', () => {
   before((done) => {
-    this.server = server(config.testPort, null, done);
+    this.server = server(config.testPort, done);
   });
 
   after((done) => {

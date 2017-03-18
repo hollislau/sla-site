@@ -29,7 +29,7 @@ describe('User ID hash method', () => {
     });
   });
 
-  it('creates a random hash', (done) => {
+  it('should create a random hash', (done) => {
     this.user.generateHash((err, hash) => {
       expect(err).to.be.null();
       expect(hash).to.have.length.above(0);
