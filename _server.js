@@ -1,16 +1,16 @@
 const express = require('express');
+const fs = require('fs');
 const helmet = require('helmet');
 const https = require('https');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
-const certConfig = require(__dirname + '/cert_config');
-const privateKeyPass = require(__dirname + '/config').privateKeyPass;
+const config = require(__dirname + '/config');
 
 const app = express();
 const options = {
-  key: certConfig.privateKey,
-  passphrase: privateKeyPass,
-  cert: certConfig.certificate
+  key: fs.readFileSync(__dirname + config.sslPathMod + '/ssl/private.key'),
+  passphrase: config.privateKeyPass,
+  cert: fs.readFileSync(__dirname + config.sslPathMod + '/ssl/certificate.pem')
 };
 
 app.use(helmet());

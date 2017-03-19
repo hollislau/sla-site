@@ -3,7 +3,6 @@ const chaiHttp = require('chai-http');
 const dirtyChai = require('dirty-chai');
 const mongoose = require('mongoose');
 const config = require(__dirname + '/../../../config');
-const customCa = require(__dirname + '/../../../cert_config').customCa;
 const server = require(__dirname + '/../../../_server');
 
 chai.use(dirtyChai);
@@ -31,7 +30,6 @@ describe('Server', () => {
   it('should send index on GET request to root', (done) => {
     request('https://' + config.domain + ':' + config.testPort)
       .get('/')
-      .ca(customCa)
       .end((err, res) => {
         expect(err).to.be.null();
         expect(res).to.have.status(200);
@@ -51,10 +49,8 @@ describe('Database', () => {
   });
 
   after((done) => {
-    mongoose.connection.db.dropDatabase(() => {
-      mongoose.disconnect(() => {
-        this.server.close(done);
-      });
+    mongoose.disconnect(() => {
+      this.server.close(done);
     });
   });
 
