@@ -1,6 +1,7 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const dirtyChai = require('dirty-chai');
+const mongoose = require('mongoose');
 const config = require(__dirname + '/../../../config');
 const customCa = require(__dirname + '/../../../cert_config').customCa;
 const server = require(__dirname + '/../../../_server');
@@ -13,8 +14,8 @@ const request = chai.request;
 
 describe('Server', () => {
   before((done) => {
-    this.server = server(config.testPort, () => {
-      this.serverMsg = 'Server up on port ' + config.testPort + '!';
+    this.server = server(config.testPort, (port) => {
+      this.serverMsg = 'Server up on port ' + port + '!';
       done();
     });
   });
@@ -38,5 +39,26 @@ describe('Server', () => {
         expect(res.text).to.contain('Savage SLA Resources');
         done();
       });
+  });
+});
+
+describe('Database', () => {
+  before((done) => {
+    this.server = server(config.testPort, () => {}, config.mongoDbTestUri, (mongoDbUri) => {
+      this.databaseMsg = 'Database connected at ' + mongoDbUri + '!';
+      done();
+    });
+  });
+
+  after((done) => {
+    mongoose.connection.db.dropDatabase(() => {
+      mongoose.disconnect(() => {
+        this.server.close(done);
+      });
+    });
+  });
+
+  it('should print a confirmation message', () => {
+    expect(this.databaseMsg).to.eql('Database connected at ' + config.mongoDbTestUri + '!');
   });
 });

@@ -18,7 +18,11 @@ app.use(morgan('dev'));
 app.use(express.static(__dirname + '/build'));
 
 module.exports = exports = function (port, serverCb, mongoDbUri, mongoDbCb) {
-  if (mongoDbUri) mongoose.connect(mongoDbUri, mongoDbCb);
+  if (mongoDbUri) {
+    mongoose.connect(mongoDbUri, () => {
+      mongoDbCb(mongoDbUri);
+    });
+  }
 
-  return https.createServer(options, app).listen(port, serverCb);
+  return https.createServer(options, app).listen(port, () => serverCb(port));
 };
