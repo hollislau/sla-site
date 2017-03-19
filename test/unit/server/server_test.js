@@ -13,11 +13,18 @@ const request = chai.request;
 
 describe('Server', () => {
   before((done) => {
-    this.server = server(config.testPort, done);
+    this.server = server(config.testPort, () => {
+      this.serverMsg = 'Server up on port ' + config.testPort + '!';
+      done();
+    });
   });
 
   after((done) => {
     this.server.close(done);
+  });
+
+  it('should print a confirmation message', () => {
+    expect(this.serverMsg).to.eql('Server up on port ' + config.testPort + '!');
   });
 
   it('should send index on GET request to root', (done) => {
