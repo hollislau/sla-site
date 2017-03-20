@@ -13,18 +13,11 @@ const request = chai.request;
 
 describe('Server', () => {
   before((done) => {
-    this.server = server(config.testPort, (port) => {
-      this.serverMsg = 'Server up on port ' + port + '!';
-      done();
-    });
+    this.server = server(config.testPort, () => done());
   });
 
-  after((done) => {
+  afterEach((done) => {
     this.server.close(done);
-  });
-
-  it('should print a confirmation message', () => {
-    expect(this.serverMsg).to.eql('Server up on port ' + config.testPort + '!');
   });
 
   it('should send index on GET request to root', (done) => {
@@ -37,6 +30,13 @@ describe('Server', () => {
         expect(res.text).to.contain('Savage SLA Resources');
         done();
       });
+  });
+
+  it('should return port number for logging', (done) => {
+    this.server = server(config.testPort, (port) => {
+      expect(port).to.eql(config.testPort);
+      done();
+    });
   });
 });
 
