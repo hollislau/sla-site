@@ -41,20 +41,16 @@ describe('Server', () => {
 });
 
 describe('Database', () => {
-  before((done) => {
-    this.server = server(config.testPort, () => {}, config.mongoDbTestUri, (mongoDbUri) => {
-      this.databaseMsg = 'Database connected at ' + mongoDbUri + '!';
-      done();
-    });
-  });
-
-  after((done) => {
+  afterEach((done) => {
     mongoose.disconnect(() => {
       this.server.close(done);
     });
   });
 
-  it('should print a confirmation message', () => {
-    expect(this.databaseMsg).to.eql('Database connected at ' + config.mongoDbTestUri + '!');
+  it('should return the database URI for logging', (done) => {
+    this.server = server(config.testPort, () => {}, config.mongoDbTestUri, (mongoDbUri) => {
+      expect(mongoDbUri).to.eql(config.mongoDbTestUri);
+      done();
+    });
   });
 });
