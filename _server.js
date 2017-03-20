@@ -13,16 +13,28 @@ const options = {
   cert: fs.readFileSync(__dirname + config.sslPathMod + '/ssl/certificate.pem')
 };
 
+var connectDb;
+var startServer;
+
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.static(__dirname + '/build'));
 
-module.exports = exports = function (port, serverCb, mongoDbUri, mongoDbCb) {
-  if (mongoDbUri) {
-    mongoose.connect(mongoDbUri, () => {
-      mongoDbCb(mongoDbUri);
-    });
-  }
+connectDb = (mongoDbUri, mongoDbCb) => {
+  mongoose.connect(mongoDbUri, (err) => {
+    if (err) {
+      return mongoDbCb(err, mongoDbUri);
+    }
 
+    mongoDbCb(null, mongoDbUri);
+  });
+};
+
+startServer = (port, serverCb) => {
   return https.createServer(options, app).listen(port, () => serverCb(port));
+};
+
+module.exports = exports = {
+  connectDb: connectDb,
+  startServer: startServer
 };

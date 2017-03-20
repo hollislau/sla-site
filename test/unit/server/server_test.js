@@ -3,7 +3,7 @@ const chaiHttp = require('chai-http');
 const dirtyChai = require('dirty-chai');
 const mongoose = require('mongoose');
 const config = require(__dirname + '/../../../config');
-const server = require(__dirname + '/../../../_server');
+const app = require(__dirname + '/../../../_server');
 
 chai.use(dirtyChai);
 chai.use(chaiHttp);
@@ -13,7 +13,7 @@ const request = chai.request;
 
 describe('Server', () => {
   before((done) => {
-    this.server = server(config.testPort, () => done());
+    this.server = app.startServer(config.testPort, () => done());
   });
 
   afterEach((done) => {
@@ -33,7 +33,7 @@ describe('Server', () => {
   });
 
   it('should return port number for logging', (done) => {
-    this.server = server(config.testPort, (port) => {
+    this.server = app.startServer(config.testPort, (port) => {
       expect(port).to.eql(config.testPort);
       done();
     });
@@ -42,14 +42,22 @@ describe('Server', () => {
 
 describe('Database', () => {
   afterEach((done) => {
-    mongoose.disconnect(() => {
-      this.server.close(done);
+    mongoose.disconnect(done);
+  });
+
+  it('should return database URI for logging', (done) => {
+    app.connectDb(config.mongoDbTestUri, (err, mongoDbUri) => {
+      expect(err).to.be.null();
+      expect(mongoDbUri).to.eql(config.mongoDbTestUri);
+      done();
     });
   });
 
-  it('should return the database URI for logging', (done) => {
-    this.server = server(config.testPort, () => {}, config.mongoDbTestUri, (mongoDbUri) => {
-      expect(mongoDbUri).to.eql(config.mongoDbTestUri);
+  it('should attempt to connect up to 30 times', (done) => {
+    app.connectDb('badMongoDbUri', (err, mongoDbUri, tries) => {
+      expect(err).to.exist();
+      expect(mongoDbUri).to.eql('badMongoDbUri');
+      expect(tries).to.eql(30);
       done();
     });
   });

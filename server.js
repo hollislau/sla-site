@@ -5,8 +5,11 @@ function serverCb(port) {
   process.stdout.write('Server up on port ' + port + '!\n');
 }
 
-function mongoDbCb(mongoDbUri) {
+function mongoDbCb(err, mongoDbUri) {
+  if (err) return process.stderr.write('Database connection error: ' + err.message + '!\n');
+
   process.stdout.write('Database connected at ' + mongoDbUri + '!\n');
 }
 
-app(config.port, serverCb, config.mongoDbUri, mongoDbCb);
+app.connectDb(config.mongoDbUri, mongoDbCb);
+app.startServer(config.port, serverCb);
