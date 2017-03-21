@@ -7,6 +7,8 @@ const webpack = require('webpack-stream');
 const nodemon = require('gulp-nodemon');
 const livereload = require('gulp-livereload');
 
+var nodemonStream;
+
 const lintFiles = [
   'app/**/*.js',
   'lib/**/*.js',
@@ -16,8 +18,6 @@ const lintFiles = [
   '*.js'
 ];
 const staticFiles = ['app/**/*.html'];
-
-var nodemonStream;
 
 gulp.task('lint', () => {
   return gulp.src(lintFiles)

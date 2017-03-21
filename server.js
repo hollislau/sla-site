@@ -1,15 +1,13 @@
 const app = require(__dirname + '/_server');
 const config = require(__dirname + '/config');
 
-function serverCb(port) {
-  process.stdout.write('Server up on port ' + port + '!\n');
-}
-
-function mongoDbCb(err, mongoDbUri) {
-  if (err) return process.stderr.write('Database connection error: ' + err.message + '!\n');
+app.connectDb(config.mongoDbUri, (err, mongoDbUri) => {
+  if (err) {
+    process.stderr.write('Database connection error at ' + mongoDbUri + ': ' + err.message + '!\n');
+    return;
+  }
 
   process.stdout.write('Database connected at ' + mongoDbUri + '!\n');
-}
+});
 
-app.connectDb(config.mongoDbUri, mongoDbCb);
-app.startServer(config.port, serverCb);
+app.startServer(config.port, (port) => process.stdout.write('Server up on port ' + port + '!\n'));

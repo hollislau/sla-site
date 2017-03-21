@@ -53,12 +53,12 @@ describe('Database', () => {
     });
   });
 
-  it('should attempt to connect up to 30 times', (done) => {
+  it('should attempt 10 connections and return an error', (done) => {
     app.connectDb('badMongoDbUri', (err, mongoDbUri, tries) => {
       expect(err).to.exist();
       expect(mongoDbUri).to.eql('badMongoDbUri');
-      expect(tries).to.eql(30);
+      expect(tries).to.eql(10);
       done();
-    });
+    }, 10);
   });
 });

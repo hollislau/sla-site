@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const config = require(__dirname + '/config');
 
+var startServer;
+
 const app = express();
 const options = {
   key: fs.readFileSync(__dirname + config.sslPathMod + '/ssl/private.key'),
@@ -13,25 +15,37 @@ const options = {
   cert: fs.readFileSync(__dirname + config.sslPathMod + '/ssl/certificate.pem')
 };
 
-var connectDb;
-var startServer;
+const connectDb = (mongoDbUri, cb, delay) => {
+  var timeout;
+  var tries = 0;
+
+  const timeoutDelay = delay || 1000;
+  const _mongoConnect = () => {
+    mongoose.connect(mongoDbUri, (err) => {
+      if (err) {
+        if (tries > 9) return cb(err, mongoDbUri, tries);
+
+        return timeout = setTimeout(() => {
+          _mongoConnect();
+          tries++;
+        }, timeoutDelay);
+      }
+
+      if (timeout) clearTimeout(timeout);
+
+      cb(null, mongoDbUri);
+    });
+  };
+
+  _mongoConnect();
+};
 
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.static(__dirname + '/build'));
 
-connectDb = (mongoDbUri, mongoDbCb) => {
-  mongoose.connect(mongoDbUri, (err) => {
-    if (err) {
-      return mongoDbCb(err, mongoDbUri);
-    }
-
-    mongoDbCb(null, mongoDbUri);
-  });
-};
-
-startServer = (port, serverCb) => {
-  return https.createServer(options, app).listen(port, () => serverCb(port));
+startServer = (port, cb) => {
+  return https.createServer(options, app).listen(port, () => cb(port));
 };
 
 module.exports = exports = {
