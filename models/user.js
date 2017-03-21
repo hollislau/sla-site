@@ -21,9 +21,10 @@ userSchema.methods.compareHashPass = function (password) {
   return bcrypt.compareSync(password, this.password);
 };
 
-userSchema.methods.generateHash = function (cb) {
+userSchema.methods.generateHash = function (cb, delay) {
   var timeout;
   var tries = 0;
+  var timeoutDelay = delay || 1000;
 
   const _generateHash = () => {
     const hash = crypto.randomBytes(32);
@@ -31,12 +32,12 @@ userSchema.methods.generateHash = function (cb) {
     this.idHash = hash.toString('hex');
     this.save((err) => {
       if (err) {
-        if (tries > 4) return cb(new Error('Unable to save user token hash!'));
+        if (tries > 4) return cb(new Error('Unable to save user ID hash!'), null, tries);
 
         return timeout = setTimeout(() => {
           _generateHash();
           tries++;
-        }, 1000);
+        }, timeoutDelay);
       }
 
       if (timeout) clearTimeout(timeout);
