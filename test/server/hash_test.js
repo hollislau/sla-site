@@ -2,6 +2,7 @@ const chai = require('chai');
 const dirtyChai = require('dirty-chai');
 const mongoose = require('mongoose');
 const sinon = require('sinon');
+const connectDb = require(__dirname + '/../../_server').connectDb;
 const mongoDbTestUri = require(__dirname + '/../../config').mongoDbTestUri;
 const User = require(__dirname + '/../../models/user');
 
@@ -13,7 +14,10 @@ describe('User ID hash method', () => {
   before((done) => {
     var newUser;
 
-    mongoose.connect(mongoDbTestUri);
+    connectDb(mongoDbTestUri, (err) => {
+      if (err) throw err;
+    });
+
     newUser = new User({ username: 'testuser', password: 'testpassword' });
 
     newUser.save((err, data) => {
