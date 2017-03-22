@@ -20,6 +20,7 @@ const connectDb = (mongoDbUri, cb, delay) => {
   var tries = 0;
 
   const timeoutDelay = delay || 1000;
+
   const _mongoConnect = () => {
     mongoose.connect(mongoDbUri, (err) => {
       if (err) {
