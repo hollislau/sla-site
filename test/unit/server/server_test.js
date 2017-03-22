@@ -2,6 +2,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const dirtyChai = require('dirty-chai');
 const mongoose = require('mongoose');
+const sinon = require('sinon');
 const config = require(__dirname + '/../../../config');
 const app = require(__dirname + '/../../../_server');
 
@@ -54,10 +55,13 @@ describe('Database', () => {
   });
 
   it('should attempt 10 connections and return an error', (done) => {
-    app.connectDb('badMongoDbUri', (err, mongoDbUri, tries) => {
+    const stub = sinon.stub(mongoose, 'connect').yields(new Error('error'));
+
+    app.connectDb(config.mongoDbTestUri, (err, mongoDbUri, tries) => {
       expect(err).to.exist();
-      expect(mongoDbUri).to.eql('badMongoDbUri');
+      expect(mongoDbUri).to.eql(config.mongoDbTestUri);
       expect(tries).to.eql(10);
+      stub.restore();
       done();
     }, 10);
   });
