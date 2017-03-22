@@ -27,7 +27,7 @@ gulp.task('lint', () => {
 });
 
 gulp.task('server:test', () => {
-  return gulp.src('test/unit/server/**/*_test.js')
+  return gulp.src('test/server/**/*_test.js')
     .pipe(mocha({
       reporter: 'spec'
     }));

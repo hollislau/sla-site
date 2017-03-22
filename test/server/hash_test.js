@@ -2,8 +2,8 @@ const chai = require('chai');
 const dirtyChai = require('dirty-chai');
 const mongoose = require('mongoose');
 const sinon = require('sinon');
-const mongoDbTestUri = require(__dirname + '/../../../config').mongoDbTestUri;
-const User = require(__dirname + '/../../../models/user');
+const mongoDbTestUri = require(__dirname + '/../../config').mongoDbTestUri;
+const User = require(__dirname + '/../../models/user');
 
 chai.use(dirtyChai);
 

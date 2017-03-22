@@ -3,8 +3,8 @@ const chaiHttp = require('chai-http');
 const dirtyChai = require('dirty-chai');
 const mongoose = require('mongoose');
 const sinon = require('sinon');
-const config = require(__dirname + '/../../../config');
-const app = require(__dirname + '/../../../_server');
+const config = require(__dirname + '/../../config');
+const app = require(__dirname + '/../../_server');
 
 chai.use(dirtyChai);
 chai.use(chaiHttp);
