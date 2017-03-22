@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const https = require('https');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+const authRouter = require(__dirname + '/routes/auth_router');
 const config = require(__dirname + '/config');
 
 var startServer;
@@ -44,6 +45,7 @@ const connectDb = (mongoDbUri, cb, delay) => {
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.static(__dirname + '/build'));
+app.use('/api', authRouter);
 
 startServer = (port, cb) => {
   return https.createServer(options, app).listen(port, () => cb(port));

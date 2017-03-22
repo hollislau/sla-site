@@ -34,7 +34,7 @@ userSchema.methods.generateHash = function (cb, delay) {
 
     this.save((err) => {
       if (err) {
-        if (tries > 4) return cb(new Error('Unable to save user ID hash!'), null, tries);
+        if (tries > 4) return cb(new Error('Could not save user ID hash!'), null, tries);
 
         return timeout = setTimeout(() => {
           _generateHash();

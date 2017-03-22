@@ -58,10 +58,10 @@ describe('Database', () => {
     const stub = sinon.stub(mongoose, 'connect').yields(new Error('error'));
 
     app.connectDb(config.mongoDbTestUri, (err, mongoDbUri, tries) => {
+      stub.restore();
       expect(err).to.exist();
       expect(mongoDbUri).to.eql(config.mongoDbTestUri);
       expect(tries).to.eql(10);
-      stub.restore();
       done();
     }, 10);
   });

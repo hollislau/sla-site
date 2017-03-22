@@ -20,10 +20,10 @@ describe('User ID hash method', () => {
 
     newUser = new User({ username: 'testuser', password: 'testpassword' });
 
-    newUser.save((err, data) => {
+    newUser.save((err, user) => {
       if (err) throw err;
 
-      this.user = data;
+      this.user = user;
       done();
     });
   });
@@ -47,11 +47,11 @@ describe('User ID hash method', () => {
     const stub = sinon.stub(this.user, 'save').yields(new Error('error'));
 
     this.user.generateHash((err, hash, tries) => {
+      stub.restore();
       expect(err).to.exist();
-      expect(err.message).to.eql('Unable to save user ID hash!');
+      expect(err.message).to.eql('Could not save user ID hash!');
       expect(hash).to.be.null();
       expect(tries).to.eql(5);
-      stub.restore();
       done();
     }, 10);
   });
