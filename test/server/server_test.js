@@ -11,6 +11,7 @@ chai.use(chaiHttp);
 
 const expect = chai.expect;
 const request = chai.request;
+const testUrl = 'https://' + config.domain + ':' + config.testPort;
 
 describe('Server', () => {
   before((done) => {
@@ -22,7 +23,7 @@ describe('Server', () => {
   });
 
   it('should send index on GET request to root', (done) => {
-    request('https://' + config.domain + ':' + config.testPort)
+    request(testUrl)
       .get('/')
       .end((err, res) => {
         expect(err).to.be.null();

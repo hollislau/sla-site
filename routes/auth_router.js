@@ -7,9 +7,9 @@ const User = require(__dirname + '/../models/user');
 router.post('/signup', bodyParser, (req, res) => {
   var newUser;
 
-  if (!req.body.username) return errorHandler(new Error('No username!'), res, 500);
+  if (!req.body.username) return errorHandler(new Error('Missing username!'), res, 500);
 
-  if (!req.body.password) return errorHandler(new Error('No password!'), res, 500);
+  if (!req.body.password) return errorHandler(new Error('Missing password!'), res, 500);
 
   newUser = new User(req.body);
   newUser.generateHashPass(req.body.password);

@@ -12,6 +12,7 @@ chai.use(chaiHttp);
 
 const expect = chai.expect;
 const request = chai.request;
+const testUrl = 'https://' + config.domain + ':' + config.testPort;
 
 describe('Authentication resource', () => {
   before((done) => {
@@ -35,26 +36,26 @@ describe('Authentication resource', () => {
       mongoose.connection.db.dropDatabase(done);
     });
 
-    it('should require a new user name', (done) => {
-      request('https://' + config.domain + ':' + config.testPort)
+    it('should require a new username', (done) => {
+      request(testUrl)
         .post('/api/signup')
         .send({ username: '', password: 'testpassword' })
         .end((err, res) => {
           expect(err).to.exist();
           expect(res).to.have.status(500);
-          expect(res.body.msg).to.eql('No username!');
+          expect(res.body.msg).to.eql('Missing username!');
           done();
         });
     });
 
     it('should require a new password', (done) => {
-      request('https://' + config.domain + ':' + config.testPort)
+      request(testUrl)
         .post('/api/signup')
         .send({ username: 'testuser', password: '' })
         .end((err, res) => {
           expect(err).to.exist();
           expect(res).to.have.status(500);
-          expect(res.body.msg).to.eql('No password!');
+          expect(res.body.msg).to.eql('Missing password!');
           done();
         });
     });
@@ -62,7 +63,7 @@ describe('Authentication resource', () => {
     it('should return an error if new user is not saved', (done) => {
       const stub = sinon.stub(User.prototype, 'save').yields(new Error('error'));
 
-      request('https://' + config.domain + ':' + config.testPort)
+      request(testUrl)
         .post('/api/signup')
         .send({ username: 'testuser', password: 'testpassword' })
         .end((err, res) => {
@@ -75,7 +76,7 @@ describe('Authentication resource', () => {
     });
 
     it('should create a new user', (done) => {
-      request('https://' + config.domain + ':' + config.testPort)
+      request(testUrl)
         .post('/api/signup')
         .send({ username: 'testuser', password: 'testpassword' })
         .end((err, res) => {
@@ -86,5 +87,67 @@ describe('Authentication resource', () => {
           done();
         });
     });
+  });
+
+  describe('sign in route', () => {
+    before((done) => {
+      const newUser = new User({ username: 'testuser', password: 'testpassword' });
+
+      newUser.generateHashPass(newUser.password);
+
+      newUser.save((err) => {
+        if (err) throw err;
+
+        done();
+      });
+    });
+
+    it('should require a username', (done) => {
+      request(testUrl)
+        .get('/api/signin')
+        .auth('', 'testpassword')
+        .end((err, res) => {
+          expect(err).to.exist();
+          expect(res).to.have.status(401);
+          expect(res.body.msg).to.eql('Missing username or password!');
+          done();
+        });
+    });
+
+    it('should require a password', (done) => {
+      request(testUrl)
+        .get('/api/signin')
+        .auth('testuser', '')
+        .end((err, res) => {
+          expect(err).to.exist();
+          expect(res).to.have.status(401);
+          expect(res.body.msg).to.eql('Missing username or password!');
+          done();
+        });
+    });
+  });
+
+  it('should require a valid username', (done) => {
+    request(testUrl)
+      .get('/api/signin')
+      .auth('baduser', 'testpassword')
+      .end((err, res) => {
+        expect(err).to.exist();
+        expect(res).to.have.status(401);
+        expect(res.body.msg).to.eql('Incorrect username or password!');
+        done();
+      });
+  });
+
+  it('should require a valid password', (done) => {
+    request(testUrl)
+      .get('/api/signin')
+      .auth('testuser', 'badpassword')
+      .end((err, res) => {
+        expect(err).to.exist();
+        expect(res).to.have.status(401);
+        expect(res.body.msg).to.eql('Incorrect username or password!');
+        done();
+      });
   });
 });
