@@ -26,4 +26,18 @@ router.post('/signup', bodyParser, (req, res) => {
   });
 });
 
+router.get('/signin', basicHttp, (req, res) => {
+  User.findOne({ username: req.auth.username }, (err, user) => {
+    if (err) return errorHandler(err, res, 500, 'Database error!');
+
+    if (!(user && user.compareHashPass(req.auth.password))) {
+      return errorHandler(err, res, 401, 'Incorrect username or password!');
+    }
+
+    user.generateToken((err, token) => {
+      if (err) return errorHandler(err, res, 500);
+    });
+  });
+});
+
 module.exports = exports = router;

@@ -61,7 +61,7 @@ describe('Authentication resource', () => {
     });
 
     it('should return an error if new user is not saved', (done) => {
-      const stub = sinon.stub(User.prototype, 'save').yields(new Error('error'));
+      const stub = sinon.stub(User.prototype, 'save').yieldsAsync(new Error('error'));
 
       request(testUrl)
         .post('/api/signup')
@@ -71,6 +71,25 @@ describe('Authentication resource', () => {
           expect(err).to.exist();
           expect(res).to.have.status(500);
           expect(res.body.msg).to.eql('Could not save new user!');
+          done();
+        });
+    });
+
+    it.skip('should retun an error if user ID hash is not saved', (done) => {
+      const stub = sinon.stub(User.prototype, 'save');
+
+      stub
+        .onFirstCall().callThrough()
+        .onSecondCall().yieldsAsync(new Error('error'));
+
+      request(testUrl)
+        .post('/api/signup')
+        .send({ username: 'testuser', password: 'testpassword' })
+        .end((err, res) => {
+          stub.restore();
+          expect(err).to.exist();
+          expect(res).to.have.status(500);
+          expect(res.body.msg).to.eql('Could not save user ID hash!');
           done();
         });
     });
@@ -125,29 +144,44 @@ describe('Authentication resource', () => {
           done();
         });
     });
-  });
 
-  it('should require a valid username', (done) => {
-    request(testUrl)
-      .get('/api/signin')
-      .auth('baduser', 'testpassword')
-      .end((err, res) => {
-        expect(err).to.exist();
-        expect(res).to.have.status(401);
-        expect(res.body.msg).to.eql('Incorrect username or password!');
-        done();
-      });
-  });
+    it('should return an error on a database error', (done) => {
+      const stub = sinon.stub(mongoose.Model, 'findOne').yieldsAsync(new Error('error'));
 
-  it('should require a valid password', (done) => {
-    request(testUrl)
-      .get('/api/signin')
-      .auth('testuser', 'badpassword')
-      .end((err, res) => {
-        expect(err).to.exist();
-        expect(res).to.have.status(401);
-        expect(res.body.msg).to.eql('Incorrect username or password!');
-        done();
-      });
+      request(testUrl)
+        .get('/api/signin')
+        .auth('testuser', 'testpassword')
+        .end((err, res) => {
+          stub.restore();
+          expect(err).to.exist();
+          expect(res).to.have.status(500);
+          expect(res.body.msg).to.eql('Database error!');
+          done();
+        });
+    });
+
+    it('should require a valid username', (done) => {
+      request(testUrl)
+        .get('/api/signin')
+        .auth('baduser', 'testpassword')
+        .end((err, res) => {
+          expect(err).to.exist();
+          expect(res).to.have.status(401);
+          expect(res.body.msg).to.eql('Incorrect username or password!');
+          done();
+        });
+    });
+
+    it('should require a valid password', (done) => {
+      request(testUrl)
+        .get('/api/signin')
+        .auth('testuser', 'badpassword')
+        .end((err, res) => {
+          expect(err).to.exist();
+          expect(res).to.have.status(401);
+          expect(res.body.msg).to.eql('Incorrect username or password!');
+          done();
+        });
+    });
   });
 });

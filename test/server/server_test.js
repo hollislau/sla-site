@@ -56,7 +56,7 @@ describe('Database', () => {
   });
 
   it('should attempt 10 connections and return an error', (done) => {
-    const stub = sinon.stub(mongoose, 'connect').yields(new Error('error'));
+    const stub = sinon.stub(mongoose, 'connect').yieldsAsync(new Error('error'));
 
     app.connectDb(config.mongoDbTestUri, (err, mongoDbUri, tries) => {
       stub.restore();

@@ -44,7 +44,7 @@ describe('User ID hash method', () => {
   });
 
   it('should make 5 attempts and return an error', (done) => {
-    const stub = sinon.stub(this.user, 'save').yields(new Error('error'));
+    const stub = sinon.stub(this.user, 'save').yieldsAsync(new Error('error'));
 
     this.user.generateHash((err, hash, tries) => {
       stub.restore();
