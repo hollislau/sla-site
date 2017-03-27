@@ -75,12 +75,8 @@ describe('Authentication resource', () => {
         });
     });
 
-    it.skip('should retun an error if user ID hash is not saved', (done) => {
-      const stub = sinon.stub(User.prototype, 'save');
-
-      stub
-        .onFirstCall().callThrough()
-        .onSecondCall().yieldsAsync(new Error('error'));
+    it('should retun an error if user ID hash is not saved', (done) => {
+      const stub = sinon.stub(User.prototype, 'generateHash').yieldsAsync(new Error('Test error'));
 
       request(testUrl)
         .post('/api/signup')
@@ -89,8 +85,8 @@ describe('Authentication resource', () => {
           stub.restore();
           expect(err).to.exist();
           expect(res).to.have.status(500);
-          expect(res.body.msg).to.eql('Could not save user ID hash!');
-          done();
+          expect(res.body.msg).to.eql('Test error');
+          mongoose.connection.db.dropDatabase(done);
         });
     });
 
