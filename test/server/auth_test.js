@@ -179,5 +179,20 @@ describe('Authentication resource', () => {
           done();
         });
     });
+
+    it('should retun an error if user ID hash is not saved', (done) => {
+      const stub = sinon.stub(User.prototype, 'generateHash').yieldsAsync(new Error('Test error'));
+
+      request(testUrl)
+        .get('/api/signin')
+        .auth('testuser', 'testpassword')
+        .end((err, res) => {
+          stub.restore();
+          expect(err).to.exist();
+          expect(res).to.have.status(500);
+          expect(res.body.msg).to.eql('Test error');
+          done();
+        });
+    });
   });
 });
