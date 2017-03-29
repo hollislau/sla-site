@@ -194,5 +194,18 @@ describe('Authentication resource', () => {
           done();
         });
     });
+
+    it('should sign in an existing user', (done) => {
+      request(testUrl)
+        .get('/api/signin')
+        .auth('testuser', 'testpassword')
+        .end((err, res) => {
+          expect(err).to.be.null();
+          expect(res).to.have.status(200);
+          expect(res.body.token).to.exist();
+          expect(res.body.msg).to.eql('Login successful!');
+          done();
+        });
+    });
   });
 });

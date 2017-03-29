@@ -36,6 +36,8 @@ router.get('/signin', basicHttp, (req, res) => {
 
     user.generateToken((err, token) => {
       if (err) return errorHandler(err, res, 500);
+
+      res.status(200).json({ token, msg: 'Login successful!' });
     });
   });
 });
